@@ -1,5 +1,5 @@
 @RestResource(UrlMapping='/Lead ')
-global with sharing class LeadManager {
+global with sharing class LeadManager {//Manager это support класс который отвечает за получение данных из БД. Тогда как REST класс должен быть REST классом)
 
     @HttpPost
     global static String getLead() {
@@ -8,7 +8,7 @@ global with sharing class LeadManager {
 
 
         if (leadID != null) {
-            return leadID;
+            return leadID;//Нам нужна вся информация по лиду, не только его айдишка)
         } else {
             return 'Lead NOT Found';
         }
@@ -19,7 +19,7 @@ global with sharing class LeadManager {
 
         Task taskForId;
 
-        String [] subjectPicklist = new List<String>();
+        String [] subjectPicklist = new List<String>();//Где-то я это уже видел, код ниже можно заменить на присвоение конструктору 
         subjectPicklist.add('Call');
         subjectPicklist.add('Email');
         subjectPicklist.add('Send Letter');
@@ -32,18 +32,18 @@ global with sharing class LeadManager {
         Map<String, Object> subject = (Map< String, Object >) taskforlead.get('subject');
 
         for (String key : subject.keySet()) {
-            Object value = subject.get(key);
+            Object value = subject.get(key);//Сразу приводи тип в строку
             if (leadID != null) {
                 taskForId = new Task(
-                        Subject = (String) value,
-                        WhoId = 'leadId',
+                        Subject = (String) value,//Читай задание, плсю проверка на пустоту отсутствует
+                        WhoId = 'leadId',//wut
                         WhatId = 'SFDC Computing',
-                        OwnerId = '0055j000006LEeMAAW',
+                        OwnerId = '0055j000006LEeMAAW',//Отвратительно
                         Status = 'No Sorted'
                 );
             } else {
                 System.debug(LoggingLevel.ERROR, 'Could not create task');
-                return 'Could not create task without Name (Lead/Case)';
+                return 'Could not create task without Name (Lead/Case)';//Посмотри на тип возвращаемого значения метода... Что-то не так
             }
         }
         insert taskForId;
@@ -58,10 +58,10 @@ global with sharing class LeadManager {
         Lead leadPassedResult;
 
         try {
-            String idResult = '%' + result.get('id').toString() + '%';
-            String emailResult = '%' + result.get('email').toString() + '%';
-            Boolean idValue = idResult.contains('a-zA-Z0-9') && idResult.length() == idLength;
-            Boolean emailValue = emailResult.contains('a-zA-Z0-9' + '@');
+            String idResult = '%' + result.get('id').toString() + '%';//Уже видел, упадет
+            String emailResult = '%' + result.get('email').toString() + '%';// same
+            Boolean idValue = idResult.contains('a-zA-Z0-9') && idResult.length() == idLength;//Айдишки бывают 2х типов по количеству символов...
+            Boolean emailValue = emailResult.contains('a-zA-Z0-9' + '@');//А зачем + ?
 
             if (idResult != null && idValue) {
                 leadPassedResult = [
@@ -88,7 +88,7 @@ global with sharing class LeadManager {
                 System.debug(LoggingLevel.ERROR, 'Lead NOT Found');
                 return 'Lead NOT Found';
             }
-            return leadPassedResult.Id;
+            return leadPassedResult.Id;//Упадет если не найдены совпадения
 
         } catch (NullPointerException ex) {
             System.debug(LoggingLevel.INFO, 'EXCEPTION' + ex);
@@ -97,7 +97,7 @@ global with sharing class LeadManager {
 
     }
 
-    public static Map< String, Object > getRest() {
+    public static Map< String, Object > getRest() {//Название
 
         RestRequest restRequest = RestContext.request;
 
